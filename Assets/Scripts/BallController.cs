@@ -11,7 +11,7 @@ public class BallController : MonoBehaviour, IPointerDownHandler
     [SerializeField] Rigidbody rb;
     [SerializeField] float force;
     [SerializeField] LineRenderer aimLine;
-    [SerializeField] Transform aimworld;
+    [SerializeField] Transform aimWorld;
     float forceFactor;
     bool shoot;
     bool shootingMode;
@@ -28,7 +28,7 @@ public class BallController : MonoBehaviour, IPointerDownHandler
             if (Input.GetMouseButtonDown(0))
             {
                 aimLine.gameObject.SetActive(true);
-                aimworld.gameObject.SetActive(true);
+                aimWorld.gameObject.SetActive(true);
                 plane = new Plane(Vector3.up, this.transform.position);
 
             }
@@ -56,9 +56,9 @@ public class BallController : MonoBehaviour, IPointerDownHandler
                 forceFactor =pointerDirection.magnitude*2;
 
                 //visual
-                aimworld.transform.position = this.transform.position;
-                aimworld.forward = forceDirection;
-                aimworld.localScale = new Vector3(1,1,0.5f+forceFactor);
+                aimWorld.transform.position = this.transform.position;
+                aimWorld.forward = forceDirection;
+                aimWorld.localScale = new Vector3(1,1,0.5f+forceFactor);
 
             }
             else if (Input.GetMouseButtonUp(0))
@@ -67,7 +67,7 @@ public class BallController : MonoBehaviour, IPointerDownHandler
                 shootingMode = false;
                 
                 aimLine.gameObject.SetActive(false );
-                aimworld.gameObject.SetActive(false);
+                aimWorld.gameObject.SetActive(false);
             }
         }
     }
@@ -76,9 +76,7 @@ public class BallController : MonoBehaviour, IPointerDownHandler
         if (shoot)
         {
             shoot = false;
-            Vector3 direction = Camera.main.transform.forward;
-            direction.y = 0;
-            rb.AddForce(direction * force * forceFactor, ForceMode.Impulse);
+            rb.AddForce(forceDirection * force * forceFactor, ForceMode.Impulse);
         }
 
         if (rb.velocity.sqrMagnitude > 0 && rb.velocity.sqrMagnitude < 0.01f)
@@ -93,6 +91,10 @@ public class BallController : MonoBehaviour, IPointerDownHandler
 
     void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
     {
+        if (this.IsMove())
+        {
+            return;
+        }
         shootingMode = true;
     }
 }
