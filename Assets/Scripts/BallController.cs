@@ -36,16 +36,10 @@ public class BallController : MonoBehaviour, IPointerDownHandler
             {
                 var mouseViewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
                 var ballViewportPos = Camera.main.WorldToViewportPoint(this.transform.position);
-                var ballScreenPos = Camera.main.WorldToScreenPoint(this.transform.position);
                 var pointerDirection = ballViewportPos - mouseViewportPos;
                 pointerDirection.z = 0;
                 
-                //aim
-                // aimLine.transform.position = ballScreenPos;
-                // var positions = new Vector3[]{ballScreenPos, Input.mousePosition};
-                // aimLine.SetPositions(positions);
-                
-                //force direction
+                //power direction
                 ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 plane.Raycast(ray, out var distance);
                 forceDirection = (this.transform.position - ray.GetPoint(distance)); 
@@ -58,7 +52,17 @@ public class BallController : MonoBehaviour, IPointerDownHandler
                 //visual
                 aimWorld.transform.position = this.transform.position;
                 aimWorld.forward = forceDirection;
-                aimWorld.localScale = new Vector3(1,1,0.5f+forceFactor);
+                aimWorld.localScale = new Vector3(1,1,0.5f + forceFactor);
+
+
+                var ballScreenPos = Camera.main.WorldToScreenPoint(this.transform.position);
+                var mouseScreenPos = Input.mousePosition;
+                ballScreenPos.z = 1;
+                mouseScreenPos.z = 1;
+                var positions = new Vector3[]{
+                    Camera.main.ScreenToWorldPoint(ballScreenPos),
+                    Camera.main.ScreenToWorldPoint(mouseScreenPos)};
+                aimLine.SetPositions(positions);
 
             }
             else if (Input.GetMouseButtonUp(0))
